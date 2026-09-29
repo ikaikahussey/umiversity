@@ -34,3 +34,13 @@ export function Pill({ children, tone = "neutral" }: { children: ReactNode; tone
         : "bg-stone-100 text-stone-700";
   return <span className={`inline-block rounded px-1.5 py-0.5 text-xs ${cls}`}>{children}</span>;
 }
+
+/** Shows a one-line confirmation passed as ?notice= after a redirecting action. */
+export function Notice({ text }: { text?: string | string[] }) {
+  if (typeof text !== "string" || !text) return null;
+  return (
+    <p role="status" className="mb-4 rounded border border-accent bg-accent-soft px-3 py-2 text-sm text-accent">
+      {text.slice(0, 200)}
+    </p>
+  );
+}

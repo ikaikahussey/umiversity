@@ -8,7 +8,7 @@ export function SiteFooter() {
         <Link href="/" aria-label="Umiversity home" className="inline-flex">
           <Wordmark className="h-7 w-auto" />
         </Link>
-        <p>Umiversity — learn across fields</p>
+        <p>Umiversity — a school for lifelong learners</p>
       </div>
     </footer>
   );

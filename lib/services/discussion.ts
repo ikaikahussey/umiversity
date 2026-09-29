@@ -6,6 +6,7 @@ import { requireText } from "@/lib/text";
 import { recordActivity } from "./engagement";
 import { notify } from "./notifications";
 import { LEVEL, courseLevel, maybeGrantContributor } from "./permissions";
+import { RESOURCE_SCORE_FOR_POINTS, awardPoints, clawBack } from "./points";
 import { enforceRateLimit } from "./rate-limit";
 import type { AppUser } from "./users";
 
@@ -92,7 +93,11 @@ export async function vote(db: Tx, user: AppUser, type: VoteTarget, targetId: st
     SET score = COALESCE((SELECT sum(value) FROM votes WHERE target_type = ${type} AND target_id = ${targetId}), 0)
     WHERE id = ${targetId}
     RETURNING score`);
-  return Number(res.rows[0]?.score ?? 0);
+  const score = Number(res.rows[0]?.score ?? 0);
+  if (type === "resource" && info.author && score >= RESOURCE_SCORE_FOR_POINTS) {
+    await awardPoints(db, info.author, "approved_resource", "resource", targetId);
+  }
+  return score;
 }
 
 /** Marks (or clears, with postId null) the accepted answer. Allowed for the asker and Stewards. */
@@ -110,9 +115,14 @@ export async function acceptAnswer(db: Tx, user: AppUser, threadId: string, post
   }
   const previous = thread.acceptedPostId;
   await db.update(threads).set({ acceptedPostId: postId }).where(eq(threads.id, threadId));
+  if (previous && previous !== postId) {
+    await clawBack(db, { type: "accepted_answer", sourceType: "post", sourceId: previous });
+  }
   if (post && post.authorId !== thread.authorId && post.id !== previous) {
     await maybeGrantContributor(db, post.authorId, thread.courseId);
     await recordActivity(db, post.authorId);
+    // No points when the accepter wrote the answer (self-accepted).
+    if (post.authorId !== user.id) await awardPoints(db, post.authorId, "accepted_answer", "post", post.id);
     const course = await db.query.courses.findFirst({ where: eq(courses.id, thread.courseId) });
     await notify(db, post.authorId, "accepted", `Your answer to “${thread.title}” was accepted`, `/c/${course?.slug}/q/${thread.id}`);
   }

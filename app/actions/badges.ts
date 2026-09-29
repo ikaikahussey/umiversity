@@ -2,7 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
-import { runAction, str, type ActionState } from "@/lib/action";
+import { runAction, safePath, str, type ActionState } from "@/lib/action";
 import { AppError } from "@/lib/errors";
 import { endorseBadge, reviewBadge, setBadgeDisplay, submitBadge } from "@/lib/services/badges";
 import { requireUser } from "@/lib/session";
@@ -49,7 +49,7 @@ export async function reviewBadgeAction(_p: ActionState, form: FormData): Promis
     revalidatePath("/admin");
     done = true;
   });
-  if (done) redirect(`${str(form, "returnTo") || "/admin"}?notice=Badge+decided`);
+  if (done) redirect(`${safePath(str(form, "returnTo"), "/admin")}?notice=Badge+decided`);
   return state;
 }
 

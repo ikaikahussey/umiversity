@@ -3,6 +3,7 @@ import type { Tx } from "@/db";
 import { resources, users } from "@/db/schema";
 import { AppError } from "@/lib/errors";
 import { requireText } from "@/lib/text";
+import { partnerForUrl } from "./affiliates";
 import { resolveScope, type Scope } from "./discussion";
 import { LEVEL, courseLevel, requireCourseLevel } from "./permissions";
 import type { AppUser } from "./users";
@@ -49,6 +50,7 @@ export async function addResource(db: Tx, user: AppUser, input: ResourceInput) {
     ? (input.level as ResourceLevel)
     : "beginner";
   const approved = (await courseLevel(db, user, scope.courseId)) >= LEVEL.contributor;
+  const partner = await partnerForUrl(db, url);
   const [r] = await db
     .insert(resources)
     .values({
@@ -61,6 +63,7 @@ export async function addResource(db: Tx, user: AppUser, input: ResourceInput) {
       source: "user",
       approved,
       approvedById: approved ? user.id : null,
+      partnerId: partner?.id ?? null,
     })
     .onConflictDoNothing()
     .returning();

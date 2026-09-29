@@ -16,7 +16,7 @@ function escapeHtml(s: string): string {
 function safeHref(raw: string): string | null {
   const href = raw.trim();
   if (/^(https?:\/\/|mailto:)/i.test(href)) return href;
-  if (href.startsWith("/") && !href.startsWith("//")) return href;
+  if (/^\/(?![/\\])/.test(href)) return href;
   return null;
 }
 

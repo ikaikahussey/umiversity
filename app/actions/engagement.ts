@@ -2,14 +2,14 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
-import { runAction, str, type ActionState } from "@/lib/action";
+import { runAction, safePath, str, type ActionState } from "@/lib/action";
 import { POLYMATH_LABELS, completeLesson, reviewCard, scheduleCard, setFollow } from "@/lib/services/engagement";
 import { markAllRead } from "@/lib/services/notifications";
 import { requireUser } from "@/lib/session";
 
 function back(form: FormData) {
-  const path = str(form, "returnTo");
-  if (path.startsWith("/")) revalidatePath(path);
+  const path = safePath(str(form, "returnTo"), "");
+  if (path) revalidatePath(path);
 }
 
 export async function completeLessonAction(_p: ActionState, form: FormData): Promise<ActionState> {
@@ -23,8 +23,7 @@ export async function completeLessonAction(_p: ActionState, form: FormData): Pro
     if (r.unitCompleted) parts.push("unit finished — badge earned");
     for (const lvl of r.polymathLevelsReached) parts.push(`${POLYMATH_LABELS[lvl as 1 | 2 | 3]} reached`);
     parts.push(`streak ${r.streak.current} day${r.streak.current === 1 ? "" : "s"}`);
-    const returnTo = str(form, "returnTo");
-    dest = `${returnTo.startsWith("/") ? returnTo : "/"}?notice=${encodeURIComponent(parts.join(" · "))}`;
+    dest = `${safePath(str(form, "returnTo"))}?notice=${encodeURIComponent(parts.join(" · "))}`;
   });
   if (dest) redirect(dest);
   return state;

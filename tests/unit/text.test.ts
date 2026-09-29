@@ -45,3 +45,15 @@ describe("requireText", () => {
     expect(() => requireText(undefined, "Title", 1, 20)).toThrow();
   });
 });
+
+import { safePath } from "@/lib/action";
+
+describe("safePath", () => {
+  it("allows same-site paths only", () => {
+    expect(safePath("/c/olelo-hawaii")).toBe("/c/olelo-hawaii");
+    expect(safePath("//evil.example/x")).toBe("/");
+    expect(safePath("/\\evil.example")).toBe("/");
+    expect(safePath("https://evil.example")).toBe("/");
+    expect(safePath("", "/admin")).toBe("/admin");
+  });
+});

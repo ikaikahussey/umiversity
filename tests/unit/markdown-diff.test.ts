@@ -26,6 +26,7 @@ describe("renderMarkdown", () => {
     );
     expect(renderMarkdown("[x](javascript:alert(1))")).not.toContain("href");
     expect(renderMarkdown("[x](//evil.com)")).not.toContain("href");
+    expect(renderMarkdown("[x](/\\\\evil.com)")).not.toContain("href");
     expect(renderMarkdown("[rel](/c/olelo-hawaii)")).toContain('href="/c/olelo-hawaii"');
   });
 

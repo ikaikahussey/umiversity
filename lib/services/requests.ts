@@ -5,6 +5,7 @@ import { AppError } from "@/lib/errors";
 import { requireText } from "@/lib/text";
 import { uniqueCourseSlug } from "./courses";
 import { notify } from "./notifications";
+import { awardPoints } from "./points";
 import { requireStaff } from "./permissions";
 import { enforceRateLimit } from "./rate-limit";
 import type { AppUser } from "./users";
@@ -145,6 +146,7 @@ export async function promoteRequest(db: Tx, requestId: string, actor: AppUser |
       .insert(courseRoles)
       .values(editorIds.map((userId) => ({ courseId: course.id, userId, role: "editor" as const })))
       .onConflictDoNothing();
+    await awardPoints(tx, req.requesterId, "course_promoted", "request", req.id);
     for (const userId of editorIds) {
       await notify(tx, userId, "promoted", `“${course.title}” is now a draft course. You are a founding editor.`, `/c/${course.slug}/edit`);
     }

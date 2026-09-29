@@ -4,6 +4,7 @@ import { courseRoles, courses, domains, fields, lessons, revisions, units, users
 import { AppError } from "@/lib/errors";
 import { requireText, slugify } from "@/lib/text";
 import { notify } from "./notifications";
+import { awardPoints, clawBack } from "./points";
 import { LEVEL, maybeGrantContributor, requireCourseLevel, type CourseRole } from "./permissions";
 import type { AppUser } from "./users";
 
@@ -199,7 +200,10 @@ export async function reviewRevision(
       .set({ title: rev.title, bodyMd: rev.bodyMd, currentRevisionId: rev.id })
       .where(eq(lessons.id, rev.lessonId));
     courseOpened = await maybeOpenCourse(db, course.id);
-    if (rev.authorId !== user.id) await maybeGrantContributor(db, rev.authorId, course.id);
+    if (rev.authorId !== user.id) {
+      await maybeGrantContributor(db, rev.authorId, course.id);
+      await awardPoints(db, rev.authorId, "approved_edit", "revision", rev.id);
+    }
   }
   if (rev.authorId !== user.id) {
     await notify(
@@ -242,7 +246,9 @@ export async function revertLesson(db: Tx, user: AppUser, lessonId: string, toRe
     .update(lessons)
     .set({ title: target.title, bodyMd: target.bodyMd, currentRevisionId: rev.id })
     .where(eq(lessons.id, lessonId));
-  return { revision: rev, reverted: await revisionsSupersededBy(db, lessonId, target) };
+  const reverted = await revisionsSupersededBy(db, lessonId, target);
+  for (const r of reverted) await clawBack(db, { type: "approved_edit", sourceType: "revision", sourceId: r.id });
+  return { revision: rev, reverted };
 }
 
 /** Approved, non-revert revisions made after `target` on the same lesson: the edits a revert undoes. */

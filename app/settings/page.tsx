@@ -12,7 +12,16 @@ export default async function SettingsPage() {
   if (!user) redirect("/auth/sign-in");
   return (
     <main className="flex flex-col gap-4">
-      <PageTitle sub={<Link href="/settings/badges" className="text-accent">Badges and credentials →</Link>}>Settings</PageTitle>
+      <PageTitle
+        sub={
+          <span className="flex gap-4">
+            <Link href="/settings/badges" className="text-accent">Badges and credentials →</Link>
+            <Link href="/settings/payouts" className="text-accent">Points and payouts →</Link>
+          </span>
+        }
+      >
+        Settings
+      </PageTitle>
       <Card>
         <ActionForm action={updateProfileAction} submitLabel="Save" testId="profile-form">
           <Field label="Handle">

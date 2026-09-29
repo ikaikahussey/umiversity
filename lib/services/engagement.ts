@@ -20,6 +20,7 @@ import { applyActivity, emptyStreak, nightlyCheck, type StreakState } from "@/li
 import { requireText } from "@/lib/text";
 import { notify } from "./notifications";
 import { LEVEL, requireCourseLevel } from "./permissions";
+import { awardPoints } from "./points";
 import type { AppUser } from "./users";
 
 /* ---------- streaks ---------- */
@@ -183,11 +184,16 @@ export async function completeLesson(db: Tx, user: AppUser, lessonId: string, at
       fieldId: row.course.fieldId,
       courseId: row.course.id,
     });
-    if (!before.fieldIds.has(row.course.fieldId)) result.newFieldId = row.course.fieldId;
+    await awardPoints(db, user.id, "unit_completed", "unit", row.unit.id, at);
+    if (!before.fieldIds.has(row.course.fieldId)) {
+      result.newFieldId = row.course.fieldId;
+      await awardPoints(db, user.id, "new_field", "field", row.course.fieldId, at);
+    }
     for (let lvl = (before.level + 1) as PolymathLevel; lvl <= after.level; lvl = (lvl + 1) as PolymathLevel) {
       const label = POLYMATH_LABELS[lvl as 1 | 2 | 3];
       if (await awardBadge(db, user.id, { type: "polymath", label, awardKey: `polymath:${lvl}` })) {
         result.polymathLevelsReached.push(lvl);
+        await awardPoints(db, user.id, "polymath_level", "polymath", String(lvl), at);
         await notify(db, user.id, "badge", `You reached ${label}.`, `/u/${user.handle}`);
       }
     }

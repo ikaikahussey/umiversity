@@ -23,6 +23,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/badges/[id]
       "cache-control": "private, no-store",
       "content-disposition": "inline",
       "x-content-type-options": "nosniff",
+      "content-security-policy": "sandbox; default-src 'none'; img-src 'self' data:; object-src 'self'",
     },
   });
 }

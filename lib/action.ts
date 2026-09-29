@@ -21,3 +21,8 @@ export function optStr(form: FormData, key: string): string | undefined {
   const v = form.get(key);
   return typeof v === "string" && v.trim() !== "" ? v : undefined;
 }
+
+/** Returns `value` if it is a same-site path, else `fallback`. Blocks //host and /\host open redirects. */
+export function safePath(value: string, fallback = "/"): string {
+  return /^\/(?![/\\])/.test(value) ? value : fallback;
+}

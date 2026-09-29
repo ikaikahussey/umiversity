@@ -2,14 +2,14 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
-import { optStr, runAction, str, type ActionState } from "@/lib/action";
+import { optStr, runAction, safePath, str, type ActionState } from "@/lib/action";
 import { acceptAnswer, createPost, createThread, vote, type VoteTarget } from "@/lib/services/discussion";
 import { addResource, reviewResource } from "@/lib/services/resources";
 import { requireUser } from "@/lib/session";
 
 function back(form: FormData) {
-  const path = str(form, "returnTo");
-  if (path.startsWith("/")) revalidatePath(path);
+  const path = safePath(str(form, "returnTo"), "");
+  if (path) revalidatePath(path);
 }
 
 export async function createThreadAction(_p: ActionState, form: FormData): Promise<ActionState> {

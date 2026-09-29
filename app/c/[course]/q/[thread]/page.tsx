@@ -15,13 +15,13 @@ const UUID = /^[0-9a-f-]{36}$/i;
 
 function Author({ handle, badges }: { handle: string; badges?: string[] }) {
   return (
-    <span className="text-xs text-muted">
-      <Link href={`/u/${handle}`} className="text-accent">
+    <span className="text-xs text-umi-muted">
+      <Link href={`/u/${handle}`} className="text-umi-teal">
         @{handle}
       </Link>
       {badges?.map((b) => (
         <span key={b} className="ml-1" data-testid="author-badge">
-          <Pill tone="accent">{b}</Pill>
+          <Pill tone="accent" text>{b}</Pill>
         </span>
       ))}
     </span>
@@ -44,7 +44,7 @@ export default async function ThreadPage({ params }: PageProps<"/c/[course]/q/[t
   return (
     <main className="flex flex-col gap-4">
       <nav className="text-sm">
-        <Link href={`/c/${course.slug}`} className="text-accent">
+        <Link href={`/c/${course.slug}`} className="text-umi-teal">
           {course.title}
         </Link>
       </nav>
@@ -58,7 +58,7 @@ export default async function ThreadPage({ params }: PageProps<"/c/[course]/q/[t
           canVote={Boolean(user) && user!.id !== t.authorId}
         />
         <div className="flex-1">
-          <h1 className="text-xl font-bold">{t.title}</h1>
+          <h1 className="umi-title text-2xl">{t.title}</h1>
           <Author handle={view.authorHandle} badges={view.badges.get(t.authorId)} />
           <Markdown source={t.bodyMd} className="mt-2" />
         </div>
@@ -71,7 +71,7 @@ export default async function ThreadPage({ params }: PageProps<"/c/[course]/q/[t
           const accepted = p.id === t.acceptedPostId;
           return (
             <li key={p.id}>
-              <Card className={`flex gap-3 ${accepted ? "border-accent" : ""}`}>
+              <Card className={`flex gap-3 ${accepted ? "border-umi-teal" : ""}`}>
                 <VoteControl
                   targetType="post"
                   targetId={p.id}
@@ -111,7 +111,7 @@ export default async function ThreadPage({ params }: PageProps<"/c/[course]/q/[t
         </Card>
       ) : (
         <p className="text-sm">
-          <Link href="/auth/sign-in" className="text-accent underline">
+          <Link href="/auth/sign-in" className="text-umi-teal underline">
             Sign in
           </Link>{" "}
           to answer.

@@ -12,16 +12,16 @@ export default async function Home() {
   if (!user) {
     return (
       <main>
-        <PageTitle sub="Request courses, vote them into existence, build them together, and learn across many fields.">
+        <PageTitle variant="hero" sub="Request courses, vote them into existence, build them together, and learn across many fields.">
           Become a polymath
         </PageTitle>
         <Card>
           <p className="text-sm">
-            Start with <Link className="text-accent underline" href="/c/olelo-hawaii">ʻŌlelo Hawaiʻi</Link> or{" "}
-            <Link className="text-accent underline" href="/c/moolelo-hawaii">Moʻolelo Hawaiʻi</Link>, browse{" "}
-            <Link className="text-accent underline" href="/courses">all courses</Link>, or{" "}
-            <Link className="text-accent underline" href="/requests">request one</Link>.{" "}
-            <Link className="text-accent underline" href="/auth/sign-in">Sign in</Link> to track progress.
+            Start with <Link className="text-umi-teal underline" href="/c/olelo-hawaii">ʻŌlelo Hawaiʻi</Link> or{" "}
+            <Link className="text-umi-teal underline" href="/c/moolelo-hawaii">Moʻolelo Hawaiʻi</Link>, browse{" "}
+            <Link className="text-umi-teal underline" href="/courses">all courses</Link>, or{" "}
+            <Link className="text-umi-teal underline" href="/requests">request one</Link>.{" "}
+            <Link className="text-umi-teal underline" href="/auth/sign-in">Sign in</Link> to track progress.
           </p>
         </Card>
       </main>
@@ -37,7 +37,7 @@ export default async function Home() {
   ]);
   return (
     <main className="flex flex-col gap-5">
-      <PageTitle>Aloha, {user.name}</PageTitle>
+      <PageTitle variant="title">Aloha, {user.name}</PageTitle>
       <div className="grid gap-3 sm:grid-cols-2">
         <StreakBadge current={streak.current} longest={streak.longest} freezesLeft={streak.freezesLeft} />
         <GoalBar value={goal.value} target={goal.target} type={goal.type} percent={goal.percent} />
@@ -45,7 +45,7 @@ export default async function Home() {
       <section>
         <h2 className="mb-2 text-lg font-semibold">Today’s cards</h2>
         {cards.length === 0 && (
-          <p className="text-sm text-muted">
+          <p className="text-sm text-umi-muted">
             {followed.length === 0 ? "Follow a course to get a daily card." : "No cards scheduled today."}
           </p>
         )}
@@ -55,14 +55,14 @@ export default async function Home() {
               <Card>
                 <div className="mb-1 flex items-center gap-2 text-xs">
                   <Pill tone="accent">{card.kind}</Pill>
-                  <Link href={`/c/${courseSlug}`} className="text-muted">
+                  <Link href={`/c/${courseSlug}`} className="text-umi-muted">
                     {courseTitle}
                   </Link>
                 </div>
                 <p className="text-lg font-medium">{card.body}</p>
                 {card.answer && (
                   <details className="mt-1 text-sm">
-                    <summary className="cursor-pointer text-accent">Show answer</summary>
+                    <summary className="cursor-pointer text-umi-teal">Show answer</summary>
                     {card.answer}
                   </details>
                 )}
@@ -84,10 +84,10 @@ export default async function Home() {
         <section>
           <h2 className="mb-2 text-lg font-semibold">Try a new field</h2>
           <Card>
-            <Link href={`/c/${suggestion.slug}`} className="font-medium text-accent" data-testid="suggestion">
+            <Link href={`/c/${suggestion.slug}`} className="font-medium text-umi-teal" data-testid="suggestion">
               {suggestion.title}
             </Link>
-            <span className="ml-2 text-xs text-muted">{suggestion.field}</span>
+            <span className="ml-2 text-xs text-umi-muted">{suggestion.field}</span>
             <p className="mt-1 text-sm">{suggestion.summary}</p>
           </Card>
         </section>
@@ -95,14 +95,14 @@ export default async function Home() {
       <section>
         <h2 className="mb-2 text-lg font-semibold">Following</h2>
         {followed.length === 0 ? (
-          <p className="text-sm text-muted">
-            You are not following any courses. <Link href="/courses" className="text-accent underline">Browse courses</Link>.
+          <p className="text-sm text-umi-muted">
+            You are not following any courses. <Link href="/courses" className="text-umi-teal underline">Browse courses</Link>.
           </p>
         ) : (
           <ul className="flex flex-wrap gap-2 text-sm">
             {followed.map((c) => (
               <li key={c.id}>
-                <Link href={`/c/${c.slug}`} className="rounded border border-line bg-card px-2 py-1 text-accent">
+                <Link href={`/c/${c.slug}`} className="rounded border border-umi-line bg-umi-paper px-2 py-1 text-umi-teal">
                   {c.title}
                 </Link>
               </li>

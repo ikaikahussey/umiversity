@@ -27,8 +27,9 @@ export default async function LessonEditPage({ params, searchParams }: PageProps
     <main className="flex flex-col gap-5">
       <Notice text={(await searchParams).notice} />
       <PageTitle
+        variant="title"
         sub={
-          <Link href={`/c/${course.slug}/${unit.slug}/${lesson.slug}`} className="text-accent">
+          <Link href={`/c/${course.slug}/${unit.slug}/${lesson.slug}`} className="text-umi-teal">
             View lesson
           </Link>
         }
@@ -52,7 +53,7 @@ export default async function LessonEditPage({ params, searchParams }: PageProps
           </ActionForm>
         </Card>
       ) : (
-        <p className="text-sm text-muted">Only Contributors can propose edits.</p>
+        <p className="text-sm text-umi-muted">Only Contributors can propose edits.</p>
       )}
       <section>
         <h2 className="mb-2 text-lg font-semibold">History</h2>
@@ -67,7 +68,7 @@ export default async function LessonEditPage({ params, searchParams }: PageProps
                   {r.id === lesson.currentRevisionId && <Pill tone="accent">current</Pill>}
                   {r.revertOfId && <Pill>revert</Pill>}
                   <span>@{authorHandle}</span>
-                  <span className="text-muted">{r.createdAt.toISOString().slice(0, 16).replace("T", " ")}</span>
+                  <span className="text-umi-muted">{r.createdAt.toISOString().slice(0, 16).replace("T", " ")}</span>
                   {r.summary && <span className="italic">“{r.summary}”</span>}
                 </div>
                 {caps.canSteward && r.status === "approved" && r.id !== lesson.currentRevisionId && (

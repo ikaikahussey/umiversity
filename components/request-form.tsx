@@ -34,15 +34,15 @@ export function RequestForm({ fields }: { fields: FieldOption[] }) {
         </select>
       </Field>
       {matches.length > 0 && (
-        <div className="rounded border border-amber-300 bg-amber-50 p-3 text-sm" data-testid="duplicates">
+        <div className="rounded-md border-2 border-umi-gold bg-umi-gold-tint p-3 text-sm" data-testid="duplicates">
           <p className="font-medium">Possible duplicates:</p>
           <ul className="ml-4 list-disc">
             {matches.map((m) => (
               <li key={`${m.kind}-${m.id}`}>
-                <Link href={m.href} className="text-accent underline">
+                <Link href={m.href} className="text-umi-teal underline">
                   {m.title}
                 </Link>{" "}
-                <span className="text-xs text-muted">({m.kind})</span>
+                <span className="text-xs text-umi-muted">({m.kind})</span>
               </li>
             ))}
           </ul>
@@ -52,7 +52,7 @@ export function RequestForm({ fields }: { fields: FieldOption[] }) {
         </div>
       )}
       <div className="flex items-center gap-3">
-        <button type="submit" disabled={pending} className="rounded bg-accent px-3 py-1.5 text-sm text-white disabled:opacity-50">
+        <button type="submit" disabled={pending} className="umi-btn">
           {pending ? "Checking…" : "Submit request"}
         </button>
         {state?.error && (

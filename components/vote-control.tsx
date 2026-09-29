@@ -18,7 +18,7 @@ export function VoteControl({ targetType, targetId, score, myVote, returnTo, can
         disabled={!canVote || pending}
         aria-label={`${label}${active ? " (undo)" : ""}`}
         aria-pressed={active}
-        className={`px-1 text-sm leading-none ${active ? "text-accent" : "text-muted"} disabled:opacity-40`}
+        className={`px-1 text-sm leading-none ${active ? "text-umi-teal" : "text-umi-muted"} disabled:opacity-40`}
       >
         {v === 1 ? "▲" : "▼"}
       </button>
@@ -30,7 +30,7 @@ export function VoteControl({ targetType, targetId, score, myVote, returnTo, can
       <input type="hidden" name="targetId" value={targetId} />
       <input type="hidden" name="returnTo" value={returnTo} />
       {btn(1, "Upvote")}
-      <span className="text-sm font-semibold" data-testid={`score-${targetId}`}>
+      <span className="umi-label text-sm" data-testid={`score-${targetId}`}>
         {shown}
       </span>
       {btn(-1, "Downvote")}

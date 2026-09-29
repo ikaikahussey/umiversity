@@ -20,7 +20,7 @@ export default async function RequestDetailPage({ params }: PageProps<"/requests
   const open = r.status === "open";
   return (
     <main className="flex flex-col gap-4">
-      <PageTitle sub={`${d.fieldName} · requested by @${d.requesterHandle} on ${r.createdAt.toISOString().slice(0, 10)}`}>
+      <PageTitle variant="title" sub={`${d.fieldName} · requested by @${d.requesterHandle} on ${r.createdAt.toISOString().slice(0, 10)}`}>
         {r.title}
       </PageTitle>
       <div className="flex items-center gap-3">
@@ -45,7 +45,7 @@ export default async function RequestDetailPage({ params }: PageProps<"/requests
         <Card>
           <p className="text-sm">
             This request became the course{" "}
-            <Link href={`/c/${d.course.slug}`} className="text-accent underline">
+            <Link href={`/c/${d.course.slug}`} className="text-umi-teal underline">
               {d.course.title}
             </Link>
             .
@@ -56,7 +56,7 @@ export default async function RequestDetailPage({ params }: PageProps<"/requests
         <Card>
           <p className="text-sm">
             Merged into{" "}
-            <Link href={`/requests/${d.mergedInto.id}`} className="text-accent underline">
+            <Link href={`/requests/${d.mergedInto.id}`} className="text-umi-teal underline">
               {d.mergedInto.title}
             </Link>
             .
@@ -69,17 +69,17 @@ export default async function RequestDetailPage({ params }: PageProps<"/requests
           <ul className="ml-4 list-disc text-sm">
             {d.similar.map((s) => (
               <li key={`${s.kind}-${s.id}`}>
-                <Link href={s.href} className="text-accent underline">
+                <Link href={s.href} className="text-umi-teal underline">
                   {s.title}
                 </Link>{" "}
-                <span className="text-xs text-muted">({s.kind})</span>
+                <span className="text-xs text-umi-muted">({s.kind})</span>
               </li>
             ))}
           </ul>
         </section>
       )}
       {d.mergedFrom.length > 0 && (
-        <p className="text-sm text-muted">Merged from: {d.mergedFrom.map((m) => m.title).join(", ")}</p>
+        <p className="text-sm text-umi-muted">Merged from: {d.mergedFrom.map((m) => m.title).join(", ")}</p>
       )}
       {isSiteStaff(user) && open && (
         <Card>

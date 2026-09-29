@@ -34,20 +34,20 @@ export default async function PayoutSettingsPage({ searchParams }: PageProps<"/s
       </PageTitle>
       <div className="grid gap-3 sm:grid-cols-3" data-testid="points-summary">
         <Card>
-          <p className="text-xs uppercase text-muted">Held (30 days)</p>
+          <p className="text-xs uppercase text-umi-muted">Held (30 days)</p>
           <p className="text-2xl font-bold">{summary.held}</p>
         </Card>
         <Card>
-          <p className="text-xs uppercase text-muted">Cleared</p>
+          <p className="text-xs uppercase text-umi-muted">Cleared</p>
           <p className="text-2xl font-bold">{summary.cleared}</p>
         </Card>
         <Card>
-          <p className="text-xs uppercase text-muted">Clawed back</p>
+          <p className="text-xs uppercase text-umi-muted">Clawed back</p>
           <p className="text-2xl font-bold">{summary.clawedBack}</p>
         </Card>
       </div>
       {user.pointsFrozen && <p className="text-sm text-red-700">Your points are frozen pending review.</p>}
-      {newAccount && <p className="text-sm text-muted">New accounts start earning payout-eligible points after 30 days.</p>}
+      {newAccount && <p className="text-sm text-umi-muted">New accounts start earning payout-eligible points after 30 days.</p>}
       <Card>
         <h2 className="mb-2 font-semibold">Stripe payouts</h2>
         {account?.onboardingStatus === "complete" ? (
@@ -68,7 +68,7 @@ export default async function PayoutSettingsPage({ searchParams }: PageProps<"/s
       </Card>
       <Card>
         <h2 className="mb-2 font-semibold">Payout history</h2>
-        {history.length === 0 && <p className="text-sm text-muted">No payouts yet.</p>}
+        {history.length === 0 && <p className="text-sm text-umi-muted">No payouts yet.</p>}
         <ul className="flex flex-col gap-1 text-sm">
           {history.map(({ payout, month }) => (
             <li key={payout.id}>
@@ -80,15 +80,15 @@ export default async function PayoutSettingsPage({ searchParams }: PageProps<"/s
       <Card>
         <h2 className="mb-2 font-semibold">Recent points</h2>
         <ul className="flex flex-col gap-1 text-sm" data-testid="point-events">
-          {events.length === 0 && <li className="text-muted">None yet.</li>}
+          {events.length === 0 && <li className="text-umi-muted">None yet.</li>}
           {events.map((e) => (
             <li key={e.id}>
               +{e.points} {e.type.replace(/_/g, " ")} <Pill tone={e.status === "cleared" ? "accent" : e.status === "held" ? "warn" : "neutral"}>{e.status.replace("_", " ")}</Pill>{" "}
-              <span className="text-xs text-muted">{e.createdAt.toISOString().slice(0, 10)}</span>
+              <span className="text-xs text-umi-muted">{e.createdAt.toISOString().slice(0, 10)}</span>
             </li>
           ))}
         </ul>
-        <details className="mt-3 text-xs text-muted">
+        <details className="mt-3 text-xs text-umi-muted">
           <summary className="cursor-pointer">How points are earned</summary>
           <ul className="mt-1">
             {Object.entries(POINTS).map(([k, v]) => (

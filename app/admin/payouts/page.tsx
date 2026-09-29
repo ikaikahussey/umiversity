@@ -35,12 +35,12 @@ export default async function PayoutsAdminPage() {
   const clickMap = new Map(clicks.map((c) => [c.partnerId, c.n]));
   return (
     <main className="flex flex-col gap-5">
-      <PageTitle sub={<Link href="/admin" className="text-accent">← Admin</Link>}>Payouts admin</PageTitle>
+      <PageTitle sub={<Link href="/admin" className="text-umi-teal">← Admin</Link>}>Payouts admin</PageTitle>
 
       <Card>
         <h2 className="mb-2 font-semibold">Affiliate partners</h2>
         <table className="mb-3 w-full text-sm" data-testid="partners">
-          <thead className="text-left text-xs text-muted">
+          <thead className="text-left text-xs text-umi-muted">
             <tr>
               <th>Name</th>
               <th>Domain</th>
@@ -127,7 +127,7 @@ export default async function PayoutsAdminPage() {
       <Card>
         <h2 className="mb-2 font-semibold">Payout periods</h2>
         <ul className="mb-3 flex flex-col gap-1 text-sm" data-testid="periods">
-          {periods.length === 0 && <li className="text-muted">None yet.</li>}
+          {periods.length === 0 && <li className="text-umi-muted">None yet.</li>}
           {periods.map(({ period, payees, paidCents }) => (
             <li key={period.id}>
               {period.month}: pool {money(period.poolCents)}, {period.totalPoints} points, {payees} payees, paid {money(paidCents)}{" "}
@@ -146,7 +146,7 @@ export default async function PayoutsAdminPage() {
         <h2 className="mb-2 font-semibold">Integrity</h2>
         <h3 className="text-sm font-medium">Mutual upvote pairs (30 days)</h3>
         <ul className="mb-3 text-sm" data-testid="collusion">
-          {flags.length === 0 && <li className="text-muted">No pairs flagged.</li>}
+          {flags.length === 0 && <li className="text-umi-muted">No pairs flagged.</li>}
           {flags.map((f) => (
             <li key={`${f.a}-${f.b}`}>
               @{f.a} ↔ @{f.b}: {f.a_to_b} / {f.b_to_a} upvotes

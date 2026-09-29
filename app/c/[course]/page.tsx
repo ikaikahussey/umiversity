@@ -45,10 +45,10 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
     <main className="flex flex-col gap-5">
       <Notice text={(await searchParams).notice} />
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <PageTitle sub={course.summary}>{course.title}</PageTitle>
+        <PageTitle variant="title" sub={course.summary}>{course.title}</PageTitle>
         <div className="flex flex-wrap items-center gap-2">
           <Pill tone={course.status === "open" ? "accent" : "warn"}>{course.status}</Pill>
-          <span className="text-xs text-muted" data-testid="followers">
+          <span className="text-xs text-umi-muted" data-testid="followers">
             {followers} {followers === 1 ? "follower" : "followers"}
           </span>
           {user && (
@@ -59,14 +59,14 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
             </ActionForm>
           )}
           {(caps.canProposeEdits || caps.canApprove) && (
-            <Link href={`/c/${course.slug}/edit`} className="rounded border border-line px-2 py-1 text-sm">
+            <Link href={`/c/${course.slug}/edit`} className="umi-btn-secondary">
               Edit course
             </Link>
           )}
         </div>
       </div>
       {prog && prog.total > 0 && (
-        <p className="text-sm text-muted" data-testid="course-progress">
+        <p className="text-sm text-umi-muted" data-testid="course-progress">
           Your progress: {prog.done} of {prog.total} lessons
         </p>
       )}
@@ -77,7 +77,7 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
       )}
       <section>
         <h2 className="mb-2 text-lg font-semibold">Units</h2>
-        {outline.length === 0 && <p className="text-sm text-muted">No units yet. Editors can add the first unit.</p>}
+        {outline.length === 0 && <p className="text-sm text-umi-muted">No units yet. Editors can add the first unit.</p>}
         <ol className="flex flex-col gap-3" data-testid="outline">
           {outline.map((u) => (
             <li key={u.id}>
@@ -85,15 +85,15 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
                 <h3 className="font-semibold">
                   {u.position}. {u.title}
                 </h3>
-                {u.summary && <p className="text-sm text-muted">{u.summary}</p>}
+                {u.summary && <p className="text-sm text-umi-muted">{u.summary}</p>}
                 <ul className="mt-2 flex flex-col gap-1 text-sm">
                   {u.lessons.map((l) => (
                     <li key={l.id} className="flex items-center gap-2">
-                      <Link href={`/c/${course.slug}/${u.slug}/${l.slug}`} className="text-accent underline">
+                      <Link href={`/c/${course.slug}/${u.slug}/${l.slug}`} className="text-umi-teal underline">
                         {l.title}
                       </Link>
-                      <span className="text-xs text-muted">{l.minutes} min</span>
-                      {doneIds.has(l.id) && <span className="text-xs text-accent">✓</span>}
+                      <span className="text-xs text-umi-muted">{l.minutes} min</span>
+                      {doneIds.has(l.id) && <span className="text-xs text-umi-teal">✓</span>}
                       {!l.hasBody && <Pill tone="warn">needs content</Pill>}
                     </li>
                   ))}
@@ -119,7 +119,7 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
           <ul className="flex flex-wrap gap-2 text-sm">
             {roles.map((r) => (
               <li key={r.userId}>
-                <Link href={`/u/${r.handle}`} className="text-accent">
+                <Link href={`/u/${r.handle}`} className="text-umi-teal">
                   @{r.handle}
                 </Link>{" "}
                 <Pill>{r.role}</Pill>

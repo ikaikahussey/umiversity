@@ -26,7 +26,7 @@ export function ActionForm({ action, children, submitLabel, className, resetOnSu
         <button
           type="submit"
           disabled={pending}
-          className="rounded bg-accent px-3 py-1.5 text-sm text-white disabled:opacity-50"
+          className="umi-btn"
         >
           {pending ? "Working…" : submitLabel}
         </button>
@@ -36,7 +36,7 @@ export function ActionForm({ action, children, submitLabel, className, resetOnSu
           </p>
         )}
         {state?.ok && state.message && (
-          <p role="status" className="text-sm text-accent">
+          <p role="status" className="text-sm font-semibold text-umi-teal">
             {state.message}
           </p>
         )}
@@ -47,7 +47,7 @@ export function ActionForm({ action, children, submitLabel, className, resetOnSu
 
 export function SubmitButton({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <button type="submit" className={className ?? "rounded border border-line px-2 py-1 text-xs hover:bg-accent-soft"}>
+    <button type="submit" className={className ?? "umi-btn-secondary"}>
       {children}
     </button>
   );

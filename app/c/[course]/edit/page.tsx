@@ -33,7 +33,7 @@ export default async function CourseEditPage({ params, searchParams }: PageProps
   if (!caps.canProposeEdits) {
     return (
       <main>
-        <PageTitle>{course.title}</PageTitle>
+        <PageTitle variant="title">{course.title}</PageTitle>
         <Card>
           <p className="text-sm">
             Editing opens to Contributors. You become a Contributor automatically after 5 accepted answers or edits in
@@ -60,22 +60,22 @@ export default async function CourseEditPage({ params, searchParams }: PageProps
   return (
     <main className="flex flex-col gap-5">
       <Notice text={(await searchParams).notice} />
-      <PageTitle sub={<Link href={`/c/${course.slug}`} className="text-accent">Back to course</Link>}>
+      <PageTitle variant="title" sub={<Link href={`/c/${course.slug}`} className="text-umi-teal">Back to course</Link>}>
         Edit: {course.title}
       </PageTitle>
 
       <section>
         <h2 className="mb-2 text-lg font-semibold">Proposed edits ({pending.length})</h2>
-        {pending.length === 0 && <p className="text-sm text-muted">Nothing waiting for review.</p>}
+        {pending.length === 0 && <p className="text-sm text-umi-muted">Nothing waiting for review.</p>}
         <ul className="flex flex-col gap-3" data-testid="pending-revisions">
           {pending.map((p) => (
             <li key={p.revision.id}>
               <Card>
                 <div className="mb-2 flex flex-wrap items-center gap-2 text-sm">
-                  <Link href={`/c/${course.slug}/${p.unitSlug}/${p.lessonSlug}`} className="font-medium text-accent">
+                  <Link href={`/c/${course.slug}/${p.unitSlug}/${p.lessonSlug}`} className="font-medium text-umi-teal">
                     {p.lessonTitle}
                   </Link>
-                  <span className="text-muted">by @{p.authorHandle}</span>
+                  <span className="text-umi-muted">by @{p.authorHandle}</span>
                   {p.revision.summary && <span className="italic">“{p.revision.summary}”</span>}
                 </div>
                 {p.revision.title !== p.lessonTitle && (
@@ -104,12 +104,12 @@ export default async function CourseEditPage({ params, searchParams }: PageProps
       {caps.canApprove && (
         <section>
           <h2 className="mb-2 text-lg font-semibold">Pending resources ({pendingResources.length})</h2>
-          {pendingResources.length === 0 && <p className="text-sm text-muted">No links waiting.</p>}
+          {pendingResources.length === 0 && <p className="text-sm text-umi-muted">No links waiting.</p>}
           <ul className="flex flex-col gap-2" data-testid="pending-resources">
             {pendingResources.map(({ resource: r, addedByHandle }) => (
               <li key={r.id}>
                 <Card className="flex flex-wrap items-center gap-3 text-sm">
-                  <a href={r.url} target="_blank" rel="noopener noreferrer nofollow" className="flex-1 text-accent underline">
+                  <a href={r.url} target="_blank" rel="noopener noreferrer nofollow" className="flex-1 text-umi-teal underline">
                     {r.title}
                   </a>
                   <Pill>{r.type}</Pill>
@@ -143,7 +143,7 @@ export default async function CourseEditPage({ params, searchParams }: PageProps
                 <ul className="ml-4">
                   {u.lessons.map((l) => (
                     <li key={l.id} className="flex items-center gap-2">
-                      <Link href={`/c/${course.slug}/edit/${l.id}`} className="text-accent underline">
+                      <Link href={`/c/${course.slug}/edit/${l.id}`} className="text-umi-teal underline">
                         {l.title}
                       </Link>
                       {!l.hasBody && <Pill tone="warn">empty</Pill>}
@@ -173,7 +173,7 @@ export default async function CourseEditPage({ params, searchParams }: PageProps
           <Card>
             <h3 className="mb-2 font-semibold">Add lesson</h3>
             {outline.length === 0 ? (
-              <p className="text-sm text-muted">Add a unit first.</p>
+              <p className="text-sm text-umi-muted">Add a unit first.</p>
             ) : (
               <ActionForm action={createLessonAction} submitLabel="Add lesson" resetOnSuccess>
                 {hidden}
@@ -218,11 +218,11 @@ export default async function CourseEditPage({ params, searchParams }: PageProps
           <Card>
             <h3 className="mb-2 font-semibold">Daily card queue</h3>
             <ul className="mb-3 flex flex-col gap-1 text-sm" data-testid="card-queue">
-              {queue.length === 0 && <li className="text-muted">No cards scheduled from today on.</li>}
+              {queue.length === 0 && <li className="text-umi-muted">No cards scheduled from today on.</li>}
               {queue.map((c) => (
                 <li key={c.id}>
                   <span className="font-mono text-xs">{c.scheduledFor}</span> <Pill>{c.kind}</Pill> {c.body}
-                  {c.answer && <span className="text-muted"> — {c.answer}</span>}
+                  {c.answer && <span className="text-umi-muted"> — {c.answer}</span>}
                 </li>
               ))}
             </ul>

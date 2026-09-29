@@ -52,16 +52,16 @@ export default async function LessonPage({ params, searchParams }: Props) {
   return (
     <main className="flex flex-col gap-4">
       <Notice text={(await searchParams).notice} />
-      <nav className="text-sm text-muted">
-        <Link href={`/c/${course.slug}`} className="text-accent">
+      <nav className="text-sm text-umi-muted">
+        <Link href={`/c/${course.slug}`} className="text-umi-teal">
           {course.title}
         </Link>{" "}
         › {unit.title}
       </nav>
       <div className="flex items-start justify-between gap-3">
-        <h1 className="text-2xl font-bold">{lesson.title}</h1>
+        <h1 className="umi-title text-3xl">{lesson.title}</h1>
         {caps.canProposeEdits && (
-          <Link href={`/c/${course.slug}/edit/${lesson.id}`} className="rounded border border-line px-2 py-1 text-sm">
+          <Link href={`/c/${course.slug}/edit/${lesson.id}`} className="umi-btn-secondary shrink-0">
             Propose edit
           </Link>
         )}
@@ -80,13 +80,13 @@ export default async function LessonPage({ params, searchParams }: Props) {
         {lesson.bodyMd ? (
           <Markdown source={lesson.bodyMd} />
         ) : (
-          <p className="text-sm text-muted">This lesson has no content yet.</p>
+          <p className="text-sm text-umi-muted">This lesson has no content yet.</p>
         )}
       </Card>
       {user && (
         <div data-testid="completion">
           {done ? (
-            <p className="text-sm text-accent">✓ Completed</p>
+            <p className="text-sm text-umi-teal">✓ Completed</p>
           ) : (
             <ActionForm action={completeLessonAction} submitLabel="Mark lesson complete">
               <input type="hidden" name="lessonId" value={lesson.id} />
@@ -107,14 +107,14 @@ export default async function LessonPage({ params, searchParams }: Props) {
       </section>
       <nav className="flex justify-between text-sm">
         {prev ? (
-          <Link href={`/c/${course.slug}/${prev.unitSlug}/${prev.slug}`} className="text-accent">
+          <Link href={`/c/${course.slug}/${prev.unitSlug}/${prev.slug}`} className="text-umi-teal">
             ← {prev.title}
           </Link>
         ) : (
           <span />
         )}
         {next && (
-          <Link href={`/c/${course.slug}/${next.unitSlug}/${next.slug}`} className="text-accent">
+          <Link href={`/c/${course.slug}/${next.unitSlug}/${next.slug}`} className="text-umi-teal">
             {next.title} →
           </Link>
         )}

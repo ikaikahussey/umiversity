@@ -26,7 +26,7 @@ export default async function ProfilePage({ params }: PageProps<"/u/[handle]">) 
   const credentials = badgeRows.filter((b) => !["learner", "polymath"].includes(b.badge.type));
   return (
     <main className="flex flex-col gap-4">
-      <PageTitle sub={`@${profile.handle} · joined ${profile.createdAt.toISOString().slice(0, 10)}`}>{profile.name}</PageTitle>
+      <PageTitle variant="title" sub={`@${profile.handle} · joined ${profile.createdAt.toISOString().slice(0, 10)}`}>{profile.name}</PageTitle>
       {profile.bio && (
         <Card>
           <p className="text-sm">{profile.bio}</p>
@@ -35,11 +35,11 @@ export default async function ProfilePage({ params }: PageProps<"/u/[handle]">) 
       <div className="grid gap-3 sm:grid-cols-2">
         <StreakBadge current={streak.current} longest={streak.longest} freezesLeft={streak.freezesLeft} />
         <Card>
-          <p className="text-xs uppercase tracking-wide text-muted">Polymath level</p>
+          <p className="text-xs uppercase tracking-wide text-umi-muted">Polymath level</p>
           <p className="text-2xl font-bold" data-testid="polymath-level">
             {map.level === 0 ? "—" : POLYMATH_LABELS[map.level as 1 | 2 | 3]}
           </p>
-          <p className="text-xs text-muted">
+          <p className="text-xs text-umi-muted">
             Active in {map.activeFields} field{map.activeFields === 1 ? "" : "s"} across {map.activeDomains} domain
             {map.activeDomains === 1 ? "" : "s"}
           </p>
@@ -55,8 +55,8 @@ export default async function ProfilePage({ params }: PageProps<"/u/[handle]">) 
           <ul className="flex flex-wrap gap-2" data-testid="credentials">
             {credentials.map(({ badge, fieldName }) => (
               <li key={badge.id}>
-                <Pill tone="accent">{badge.label}</Pill>
-                {fieldName && <span className="ml-1 text-xs text-muted">{fieldName}</span>}
+                <Pill tone="accent" text>{badge.label}</Pill>
+                {fieldName && <span className="ml-1 text-xs text-umi-muted">{fieldName}</span>}
               </li>
             ))}
           </ul>
@@ -68,14 +68,14 @@ export default async function ProfilePage({ params }: PageProps<"/u/[handle]">) 
           <ul className="flex flex-wrap gap-2" data-testid="learning-badges">
             {earned.map(({ badge }) => (
               <li key={badge.id}>
-                <Pill>{badge.label}</Pill>
+                <Pill text>{badge.label}</Pill>
               </li>
             ))}
           </ul>
         </Card>
       )}
-      <p className="text-xs text-muted">
-        <Link href="/settings/badges" className="text-accent">
+      <p className="text-xs text-umi-muted">
+        <Link href="/settings/badges" className="text-umi-teal">
           Add a credential
         </Link>
       </p>

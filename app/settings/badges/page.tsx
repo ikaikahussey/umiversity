@@ -63,17 +63,17 @@ export default async function BadgeSettingsPage() {
       </Card>
       <section>
         <h2 className="mb-2 font-semibold">Your badges</h2>
-        {mine.length === 0 && <p className="text-sm text-muted">None yet.</p>}
+        {mine.length === 0 && <p className="text-sm text-umi-muted">None yet.</p>}
         <ul className="flex flex-col gap-2" data-testid="my-badges">
           {mine.map(({ badge, fieldName }) => (
             <li key={badge.id}>
               <Card className="flex flex-wrap items-center gap-2 text-sm">
                 <span className="font-medium">{badge.label}</span>
                 <Pill>{badge.type}</Pill>
-                {fieldName && <span className="text-xs text-muted">{fieldName}</span>}
+                {fieldName && <span className="text-xs text-umi-muted">{fieldName}</span>}
                 <Pill tone={badge.status === "verified" ? "accent" : badge.status === "pending" ? "warn" : "neutral"}>{badge.status}</Pill>
                 {badge.type === "community" && badge.status === "pending" && (
-                  <Link href={`/badges/${badge.id}`} className="text-xs text-accent underline">
+                  <Link href={`/badges/${badge.id}`} className="text-xs text-umi-teal underline">
                     Endorsement link
                   </Link>
                 )}

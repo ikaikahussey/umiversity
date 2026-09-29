@@ -14,17 +14,17 @@ type ThreadRow = {
 };
 
 export function ThreadList({ courseSlug, threads }: { courseSlug: string; threads: ThreadRow[] }) {
-  if (threads.length === 0) return <p className="text-sm text-muted">No questions yet.</p>;
+  if (threads.length === 0) return <p className="text-sm text-umi-muted">No questions yet.</p>;
   return (
     <ul className="flex flex-col gap-2" data-testid="thread-list">
       {threads.map((t) => (
         <li key={t.id} className="flex items-center gap-3 text-sm">
-          <span className="w-8 text-center font-semibold">{t.score}</span>
-          <Link href={`/c/${courseSlug}/q/${t.id}`} className="flex-1 text-accent">
+          <span className="umi-badge min-w-8 justify-center">{t.score}</span>
+          <Link href={`/c/${courseSlug}/q/${t.id}`} className="flex-1 text-umi-teal">
             {t.title}
           </Link>
           {t.acceptedPostId && <Pill tone="accent">answered</Pill>}
-          <span className="text-xs text-muted">
+          <span className="text-xs text-umi-muted">
             {t.answers} {t.answers === 1 ? "answer" : "answers"} · @{t.authorHandle}
           </span>
         </li>
@@ -49,7 +49,7 @@ function ScopeInputs({ courseId, courseSlug, unitId, lessonId, returnTo }: Scope
 
 export function NewThreadForm(props: ScopeProps) {
   return (
-    <details className="rounded border border-line bg-card p-3">
+    <details className="rounded border border-umi-line bg-umi-paper p-3">
       <summary className="cursor-pointer text-sm font-medium">Ask a question</summary>
       <div className="mt-3">
         <ActionForm action={createThreadAction} submitLabel="Post question" testId="new-thread">
@@ -72,7 +72,7 @@ type ResourceRow = {
 };
 
 export function ResourceList({ rows, returnTo, viewerId }: { rows: ResourceRow[]; returnTo: string; viewerId?: string }) {
-  if (rows.length === 0) return <p className="text-sm text-muted">No resources yet.</p>;
+  if (rows.length === 0) return <p className="text-sm text-umi-muted">No resources yet.</p>;
   return (
     <ul className="flex flex-col gap-2" data-testid="resource-list">
       {rows.map(({ resource: r, myVote }) => (
@@ -86,7 +86,7 @@ export function ResourceList({ rows, returnTo, viewerId }: { rows: ResourceRow[]
             canVote={Boolean(viewerId) && viewerId !== r.addedById}
           />
           <div className="flex-1 text-sm">
-            <a href={`/go/${r.id}`} target="_blank" rel="noopener noreferrer nofollow" className="text-accent underline">
+            <a href={`/go/${r.id}`} target="_blank" rel="noopener noreferrer nofollow" className="text-umi-teal underline">
               {r.title}
             </a>
             <div className="mt-0.5 flex gap-1">
@@ -103,7 +103,7 @@ export function ResourceList({ rows, returnTo, viewerId }: { rows: ResourceRow[]
 
 export function AddResourceForm(props: ScopeProps) {
   return (
-    <details className="rounded border border-line bg-card p-3">
+    <details className="rounded border border-umi-line bg-umi-paper p-3">
       <summary className="cursor-pointer text-sm font-medium">Add a resource</summary>
       <div className="mt-3">
         <ActionForm action={addResourceAction} submitLabel="Add link" resetOnSuccess testId="add-resource">

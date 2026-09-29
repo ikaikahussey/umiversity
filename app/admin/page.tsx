@@ -27,10 +27,10 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
   return (
     <main className="flex flex-col gap-5">
       <Notice text={(await searchParams).notice} />
-      <PageTitle sub={<Link href="/admin/payouts" className="text-accent">Payouts and points →</Link>}>Admin</PageTitle>
+      <PageTitle sub={<Link href="/admin/payouts" className="text-umi-teal">Payouts and points →</Link>}>Admin</PageTitle>
       <section>
         <h2 className="mb-2 text-lg font-semibold">Badge review queue ({queue.length})</h2>
-        {queue.length === 0 && <p className="text-sm text-muted">Nothing to review.</p>}
+        {queue.length === 0 && <p className="text-sm text-umi-muted">Nothing to review.</p>}
         <ul className="flex flex-col gap-2" data-testid="badge-queue">
           {queue.map(({ badge, fieldName, handle, endorsements }) => (
             <li key={badge.id}>
@@ -38,22 +38,22 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-medium">{badge.label}</span>
                   <Pill>{badge.type}</Pill>
-                  <span className="text-muted">{fieldName}</span>
-                  <Link href={`/u/${handle}`} className="text-accent">
+                  <span className="text-umi-muted">{fieldName}</span>
+                  <Link href={`/u/${handle}`} className="text-umi-teal">
                     @{handle}
                   </Link>
                   {badge.type === "community" && (
-                    <Link href={`/badges/${badge.id}`} className="text-xs text-accent underline">
+                    <Link href={`/badges/${badge.id}`} className="text-xs text-umi-teal underline">
                       {endorsements}/{ENDORSEMENTS_REQUIRED} endorsements
                     </Link>
                   )}
                   {badge.evidenceBlobUrl && (
-                    <a href={`/api/badges/${badge.id}/evidence`} target="_blank" rel="noreferrer" className="text-xs text-accent underline">
+                    <a href={`/api/badges/${badge.id}/evidence`} target="_blank" rel="noreferrer" className="text-xs text-umi-teal underline">
                       View private document
                     </a>
                   )}
                 </div>
-                {badge.details && <p className="whitespace-pre-line text-muted">{badge.details}</p>}
+                {badge.details && <p className="whitespace-pre-line text-umi-muted">{badge.details}</p>}
                 <div className="flex gap-3">
                   {(["verify", "reject"] as const).map((d) => (
                     <ActionForm key={d} action={reviewBadgeAction} submitLabel={d === "verify" ? "Verify" : "Reject"}>
@@ -70,14 +70,14 @@ export default async function AdminPage({ searchParams }: PageProps<"/admin">) {
       </section>
       <section>
         <h2 className="mb-2 text-lg font-semibold">Request moderation</h2>
-        <p className="mb-2 text-sm text-muted">Open a request to merge, reject, or promote it early.</p>
+        <p className="mb-2 text-sm text-umi-muted">Open a request to merge, reject, or promote it early.</p>
         <ul className="flex flex-col gap-1 text-sm">
           {requests.map((r) => (
             <li key={r.id}>
-              <Link href={`/requests/${r.id}`} className="text-accent">
+              <Link href={`/requests/${r.id}`} className="text-umi-teal">
                 {r.title}
               </Link>{" "}
-              <span className="text-xs text-muted">
+              <span className="text-xs text-umi-muted">
                 {r.voteCount} votes · {r.fieldName} · @{r.requesterHandle}
               </span>
             </li>

@@ -15,8 +15,8 @@ export default async function SettingsPage() {
       <PageTitle
         sub={
           <span className="flex gap-4">
-            <Link href="/settings/badges" className="text-accent">Badges and credentials →</Link>
-            <Link href="/settings/payouts" className="text-accent">Points and payouts →</Link>
+            <Link href="/settings/badges" className="text-umi-teal">Badges and credentials →</Link>
+            <Link href="/settings/payouts" className="text-umi-teal">Points and payouts →</Link>
           </span>
         }
       >

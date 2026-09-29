@@ -35,30 +35,30 @@ export default async function RequestsPage({ searchParams }: PageProps<"/request
       <PageTitle sub={`Requests with ${goal} votes become draft courses. The requester and top voters become its founding editors.`}>
         Course requests
       </PageTitle>
-      <div className="flex gap-3 text-sm" role="tablist">
-        <Link href="/requests?sort=top" className={sort === "top" ? "font-semibold text-accent" : ""} role="tab" aria-selected={sort === "top"}>
+      <div className="flex gap-5" role="tablist">
+        <Link href="/requests?sort=top" className="umi-nav-link" aria-current={sort === "top" ? "page" : undefined} role="tab" aria-selected={sort === "top"}>
           Top
         </Link>
-        <Link href="/requests?sort=new" className={sort === "new" ? "font-semibold text-accent" : ""} role="tab" aria-selected={sort === "new"}>
+        <Link href="/requests?sort=new" className="umi-nav-link" aria-current={sort === "new" ? "page" : undefined} role="tab" aria-selected={sort === "new"}>
           New
         </Link>
       </div>
       <ul className="flex flex-col gap-3" data-testid="request-list">
-        {rows.length === 0 && <p className="text-sm text-muted">No open requests yet.</p>}
+        {rows.length === 0 && <p className="text-sm text-umi-muted">No open requests yet.</p>}
         {rows.map((r) => (
           <li key={r.id}>
             <Card className="flex gap-4">
-              <div className="flex w-16 flex-col items-center">
-                <span className="text-xl font-bold" data-testid="vote-count">
+              <div className="flex w-16 shrink-0 flex-col items-center gap-1">
+                <span className="umi-badge text-sm" data-testid="vote-count">
                   {r.voteCount}
                 </span>
-                <span className="text-xs text-muted">of {goal}</span>
+                <span className="text-xs text-umi-muted">of {goal}</span>
               </div>
               <div className="flex-1">
-                <Link href={`/requests/${r.id}`} className="font-medium text-accent">
+                <Link href={`/requests/${r.id}`} className="font-medium text-umi-teal">
                   {r.title}
                 </Link>
-                <p className="text-xs text-muted">
+                <p className="text-xs text-umi-muted">
                   {r.fieldName} · by @{r.requesterHandle} · {r.createdAt.toISOString().slice(0, 10)}
                 </p>
                 <p className="mt-1 line-clamp-2 text-sm">{r.description}</p>
@@ -79,14 +79,14 @@ export default async function RequestsPage({ searchParams }: PageProps<"/request
           <RequestForm fields={fieldRows} />
         ) : (
           <p className="text-sm">
-            <Link href="/auth/sign-in" className="text-accent underline">
+            <Link href="/auth/sign-in" className="text-umi-teal underline">
               Sign in
             </Link>{" "}
             to request a course or vote.
           </p>
         )}
       </Card>
-      <p className="text-xs text-muted">
+      <p className="text-xs text-umi-muted">
         <Pill>limits</Pill> 10 requests and 100 votes per day.
       </p>
     </main>

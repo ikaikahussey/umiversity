@@ -21,7 +21,7 @@ export default async function BadgePage({ params, searchParams }: PageProps<"/ba
   return (
     <main className="flex flex-col gap-4">
       <Notice text={(await searchParams).notice} />
-      <PageTitle sub={<>Community-recognized badge claimed by <Link href={`/u/${row.handle}`} className="text-accent">@{row.handle}</Link> in {row.fieldName}</>}>
+      <PageTitle variant="title" sub={<>Community-recognized badge claimed by <Link href={`/u/${row.handle}`} className="text-umi-teal">@{row.handle}</Link> in {row.fieldName}</>}>
         {row.badge.label}
       </PageTitle>
       <Card>
@@ -47,7 +47,7 @@ export default async function BadgePage({ params, searchParams }: PageProps<"/ba
           ))}
         </div>
       )}
-      <p className="text-xs text-muted">
+      <p className="text-xs text-umi-muted">
         Endorsements come from verified badge holders in {row.fieldName}. A Steward of a course in the field, or a moderator,
         approves once there are {ENDORSEMENTS_REQUIRED}.
       </p>

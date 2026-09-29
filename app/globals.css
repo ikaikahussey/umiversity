@@ -1,38 +1,293 @@
+/* Layer order: Neon Auth's reset (`* { border-color; outline-color }`) must sit below
+   our components and utilities, or it repaints every border and focus ring. */
+@layer theme, base, neon-auth, components, utilities;
+
 @import "tailwindcss";
 @import "@neondatabase/auth/ui/tailwind";
 
+/* ---------- Brand tokens ---------- */
 :root {
-  --background: #fbfaf7;
-  --foreground: #1c1b19;
-  --muted: #6b675f;
-  --accent: #0f6e63;
-  --accent-soft: #e3f1ee;
-  --border: #e4e0d8;
-  --card: #ffffff;
+  --umi-teal: #0f6e63; /* primary: links, primary buttons, active states */
+  --umi-teal-dark: #0a5249; /* hover / pressed teal */
+  --umi-gold: #e8b04a; /* accent only: borders, rules, badges, focus. Never text on cream/paper. */
+  --umi-ink: #102a27; /* text, headings, dark surfaces */
+  --umi-cream: #f6f1e4; /* page background */
+  --umi-paper: #fffdf7; /* cards and panels */
+  --umi-line: #d9d1bd; /* hairline borders */
+  --umi-muted: #4a5e5a; /* secondary text, 6.1:1 on cream */
+
+  --umi-gold-tint: color-mix(in srgb, var(--umi-gold) 25%, var(--umi-paper));
+  --umi-teal-tint: color-mix(in srgb, var(--umi-teal) 12%, var(--umi-paper));
+
+  /* Wordmark / monogram layers (see components/logo.tsx) */
+  --umi-fill: var(--umi-teal);
+  --umi-trim: var(--umi-gold);
+  --umi-outline: var(--umi-ink);
+
+  /* Graduate has no ʻokina (U+02BB); glyphs it lacks fall back to Source Sans 3. */
+  --font-display: var(--font-graduate), var(--font-source-sans), system-ui, sans-serif;
+  --font-body: var(--font-source-sans), system-ui, sans-serif;
+
+  /* Neon Auth UI (shadcn variables) follows the brand. */
+  --background: var(--umi-cream);
+  --foreground: var(--umi-ink);
+  --card: var(--umi-paper);
+  --card-foreground: var(--umi-ink);
+  --popover: var(--umi-paper);
+  --popover-foreground: var(--umi-ink);
+  --primary: var(--umi-teal);
+  --primary-foreground: var(--umi-cream);
+  --secondary: var(--umi-cream);
+  --secondary-foreground: var(--umi-ink);
+  --muted: var(--umi-cream);
+  --muted-foreground: var(--umi-muted);
+  --accent: var(--umi-gold-tint);
+  --accent-foreground: var(--umi-ink);
+  --border: var(--umi-line);
+  --input: var(--umi-muted);
+  --ring: var(--umi-gold);
 }
 
 @theme inline {
-  --color-bg: var(--background);
-  --color-fg: var(--foreground);
-  --color-muted: var(--muted);
-  --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
-  --color-line: var(--border);
-  --color-card: var(--card);
+  --color-umi-teal: var(--umi-teal);
+  --color-umi-teal-dark: var(--umi-teal-dark);
+  --color-umi-gold: var(--umi-gold);
+  --color-umi-ink: var(--umi-ink);
+  --color-umi-cream: var(--umi-cream);
+  --color-umi-paper: var(--umi-paper);
+  --color-umi-line: var(--umi-line);
+  --color-umi-muted: var(--umi-muted);
+  --color-umi-gold-tint: var(--umi-gold-tint);
+  --color-umi-teal-tint: var(--umi-teal-tint);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans", sans-serif;
+/* ---------- Base ---------- */
+@layer base {
+  body {
+    background: var(--umi-cream);
+    color: var(--umi-ink);
+    font-family: var(--font-body);
+    line-height: 1.6;
+  }
+
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    color: var(--umi-ink);
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-body);
+  }
+
+  /* Body-text links. */
+  main a {
+    color: var(--umi-teal);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  main a:hover {
+    color: var(--umi-teal-dark);
+  }
 }
 
+/* ---------- Components ---------- */
+@layer components {
+  /* Visible focus on every interactive element: gold ring with an ink inner edge (gold alone is 1.7:1 on cream). */
+  :focus-visible {
+    outline: 3px solid var(--umi-gold);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--umi-ink);
+  }
+
+  /* Graduate display face: uppercase, tracked. Never use on course titles or Hawaiian text. */
+  .umi-display {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .umi-label {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+    line-height: 1.2;
+  }
+  /* Content titles (course, lesson, people): body face, heavier, never uppercased. */
+  .umi-title {
+    font-family: var(--font-body);
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .umi-btn,
+  .umi-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0.35rem 1rem;
+    border: 2px solid var(--umi-ink);
+    border-radius: 6px;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.85rem;
+    line-height: 1.1;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .umi-btn {
+    background: var(--umi-teal);
+    color: var(--umi-cream);
+  }
+  .umi-btn:hover {
+    background: var(--umi-teal-dark);
+    color: var(--umi-cream);
+  }
+  .umi-btn-secondary {
+    background: var(--umi-cream);
+    color: var(--umi-ink);
+  }
+  .umi-btn-secondary:hover {
+    background: var(--umi-gold-tint);
+    color: var(--umi-ink);
+  }
+  .umi-btn:disabled,
+  .umi-btn-secondary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  main a.umi-btn,
+  main a.umi-btn-secondary {
+    text-decoration: none;
+  }
+  main a.umi-btn {
+    color: var(--umi-cream);
+  }
+  main a.umi-btn-secondary {
+    color: var(--umi-ink);
+  }
+
+  .umi-card {
+    background: var(--umi-paper);
+    border: 1px solid var(--umi-line);
+    border-top: 4px solid var(--umi-gold);
+    border-radius: 10px;
+    padding: 1rem;
+    transition: border-color 120ms ease;
+  }
+  .umi-card:hover {
+    border-color: var(--umi-ink);
+    border-top-color: var(--umi-gold);
+  }
+
+  /* Badges, tags, counts. */
+  .umi-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+    background: var(--umi-gold-tint);
+    color: var(--umi-ink);
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.68rem;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+  .umi-badge-teal {
+    background: var(--umi-teal-tint);
+  }
+  .umi-badge-quiet {
+    background: var(--umi-cream);
+    box-shadow: inset 0 0 0 1px var(--umi-line);
+  }
+  /* User-supplied text (credentials, course names) stays in the body face and sentence case. */
+  .umi-badge-text {
+    font-family: var(--font-body);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.78rem;
+    white-space: normal;
+  }
+
+  .umi-input {
+    width: 100%;
+    background: var(--umi-paper);
+    color: var(--umi-ink);
+    border: 1px solid var(--umi-muted);
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+    min-height: 40px;
+  }
+
+  /* Header: varsity double rule (ink border + gold line beneath). */
+  .umi-header {
+    background: var(--umi-cream);
+    border-bottom: 3px solid var(--umi-ink);
+    box-shadow: 0 2px 0 var(--umi-gold);
+  }
+  .umi-nav-link {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.8rem;
+    color: var(--umi-ink);
+    text-decoration: none;
+    padding: 0.35rem 0;
+    border-bottom: 2px solid transparent;
+  }
+  .umi-nav-link:hover,
+  .umi-nav-link[aria-current="page"] {
+    border-bottom-color: var(--umi-teal);
+    color: var(--umi-ink);
+  }
+
+  .umi-footer {
+    background: var(--umi-ink);
+    color: var(--umi-cream);
+    --umi-fill: var(--umi-cream);
+    --umi-trim: var(--umi-gold);
+    --umi-outline: var(--umi-ink);
+  }
+
+  .umi-hero-title {
+    font-size: clamp(2.25rem, 6vw, 4rem);
+  }
+  .umi-rule {
+    display: block;
+    width: 4rem;
+    height: 4px;
+    margin-top: 0.6rem;
+    background: var(--umi-gold);
+    border-radius: 2px;
+  }
+}
+
+/* ---------- Lesson prose ---------- */
 .prose-lesson h1 { font-size: 1.5rem; font-weight: 700; margin: 1.25rem 0 0.5rem; }
 .prose-lesson h2 { font-size: 1.25rem; font-weight: 600; margin: 1.1rem 0 0.4rem; }
+/* Lesson headings are Hawaiian-language content: body face, sentence case. */
+.prose-lesson h1,
+.prose-lesson h2 { font-family: var(--font-body); text-transform: none; letter-spacing: 0; }
 .prose-lesson h3 { font-size: 1.1rem; font-weight: 600; margin: 1rem 0 0.3rem; }
-.prose-lesson p { margin: 0.6rem 0; line-height: 1.65; }
+.prose-lesson p { margin: 0.6rem 0; line-height: 1.6; }
 .prose-lesson ul { list-style: disc; padding-left: 1.4rem; margin: 0.6rem 0; }
 .prose-lesson ol { list-style: decimal; padding-left: 1.4rem; margin: 0.6rem 0; }
-.prose-lesson a { color: var(--accent); text-decoration: underline; }
-.prose-lesson blockquote { border-left: 3px solid var(--border); padding-left: 0.8rem; color: var(--muted); }
-.prose-lesson code { background: #f1eee8; padding: 0 0.25rem; border-radius: 3px; }
+.prose-lesson blockquote { border-left: 3px solid var(--umi-gold); padding-left: 0.8rem; color: var(--umi-muted); }
+.prose-lesson code { background: var(--umi-cream); padding: 0 0.25rem; border-radius: 3px; }

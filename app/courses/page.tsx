@@ -11,7 +11,7 @@ export default async function CoursesPage() {
   for (const r of rows) byDomain.set(r.domainName, [...(byDomain.get(r.domainName) ?? []), r]);
   return (
     <main>
-      <PageTitle sub={<>Missing a subject? <Link href="/requests" className="text-accent underline">Request a course</Link>.</>}>
+      <PageTitle sub={<>Missing a subject? <Link href="/requests" className="text-umi-teal underline">Request a course</Link>.</>}>
         Courses
       </PageTitle>
       {[...byDomain.entries()].map(([domain, list]) => (
@@ -22,12 +22,12 @@ export default async function CoursesPage() {
               <li key={c.id}>
                 <Card>
                   <div className="flex items-center justify-between gap-2">
-                    <Link href={`/c/${c.slug}`} className="font-medium text-accent">
+                    <Link href={`/c/${c.slug}`} className="umi-title text-lg text-umi-teal">
                       {c.title}
                     </Link>
                     <Pill tone={c.status === "open" ? "accent" : "warn"}>{c.status}</Pill>
                   </div>
-                  <p className="mt-1 text-xs text-muted">{c.fieldName}</p>
+                  <p className="mt-1 text-xs text-umi-muted">{c.fieldName}</p>
                   <p className="mt-2 text-sm">{c.summary}</p>
                 </Card>
               </li>

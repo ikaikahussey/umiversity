@@ -3,7 +3,7 @@ import { diffLines } from "@/lib/diff";
 export function DiffView({ before, after }: { before: string; after: string }) {
   const lines = diffLines(before, after);
   return (
-    <pre className="max-h-80 overflow-auto rounded border border-line bg-white p-2 text-xs" data-testid="diff">
+    <pre className="max-h-80 overflow-auto rounded border border-umi-line bg-umi-paper p-2 text-xs" data-testid="diff">
       {lines.map((l, i) => (
         <div
           key={i}

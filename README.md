@@ -54,11 +54,23 @@ same folded titles.
 | --- | --- | --- |
 | `/api/cron/streaks` | daily | Streak freezes/resets; delete badge evidence 30 days after decision |
 | `/api/cron/youtube` | daily | YouTube suggestions per course, hidden until an Editor approves |
-| `/api/cron/reminders` | hourly | Reminder email at each user's chosen local hour |
+| `/api/cron/reminders` | daily (hourly on Pro) | Reminder email to users not yet active today; with `REMINDER_CRON_HOURLY=1` and an hourly schedule, at each user's chosen hour |
 | `/api/cron/digest` | weekly | Digest of new threads and badges in followed courses |
 | `/api/cron/payouts` | monthly | Clear held points, compute the month two back, send Stripe transfers |
 
-Hourly crons require a Vercel Pro plan.
+Vercel Hobby allows only daily crons, so reminders default to one daily run (09:00 HST).
+
+## Deploying on Vercel with Neon
+
+1. Add the Neon integration to the Vercel project (Storage → Neon). It sets
+   `DATABASE_URL` and `DATABASE_URL_UNPOOLED`, and can create a Neon branch for
+   each preview deployment.
+2. Enable Neon Auth on the Neon project and set `NEON_AUTH_BASE_URL`.
+3. `scripts/vercel-build.sh` runs migrations and the idempotent seed before
+   `next build` whenever `DATABASE_URL` is present, so each preview branch
+   and production get the schema and launch courses automatically.
+4. Optional services: `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`,
+   `YOUTUBE_API_KEY`, `STRIPE_SECRET_KEY`, `APP_URL`.
 
 ## Payouts
 

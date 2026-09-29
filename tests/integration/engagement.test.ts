@@ -238,6 +238,9 @@ describe("notifications and email jobs", () => {
     const res = await runDailyReminders(db, send, at("2026-09-30T04:00:00Z")); // 18:00 HST on Sep 29
     expect(sent.map((s) => s.to)).toEqual([due.email]);
     expect(res.sent).toBe(1);
+    const daily = fakeSender();
+    await runDailyReminders(db, daily.send, at("2026-09-30T04:00:00Z"), { hourly: false });
+    expect(daily.sent.map((s) => s.to).sort()).toEqual([due.email, "wrong-hour@x.test"].sort());
   });
 
   it("builds and sends a weekly digest for followed courses", async () => {

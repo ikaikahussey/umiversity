@@ -4,8 +4,13 @@ import { streaks, users } from "@/db/schema";
 import { localDate, localHour } from "@/lib/dates";
 import { appUrl, type EmailSender } from "@/lib/email";
 
-/** Hourly job: emails users whose chosen reminder hour is now and who have not been active today. */
-export async function runDailyReminders(db: Tx, send: EmailSender, at = new Date()) {
+/**
+ * Emails users who opted into reminders and have not been active today.
+ * Hourly mode (Vercel Pro) sends only to users whose chosen local hour is now;
+ * daily mode (one run per day, Hobby-compatible) sends to all of them.
+ */
+export async function runDailyReminders(db: Tx, send: EmailSender, at = new Date(), opts: { hourly?: boolean } = {}) {
+  const hourly = opts.hourly ?? true;
   const rows = await db
     .select({ user: users, last: streaks.lastActiveDate, current: streaks.current })
     .from(users)
@@ -13,7 +18,7 @@ export async function runDailyReminders(db: Tx, send: EmailSender, at = new Date
     .where(and(eq(users.notifyEmail, true), isNotNull(users.reminderHour), isNotNull(users.email)));
   let sent = 0;
   for (const { user, last, current } of rows) {
-    if (localHour(at, user.timezone) !== user.reminderHour) continue;
+    if (hourly && localHour(at, user.timezone) !== user.reminderHour) continue;
     if (last === localDate(at, user.timezone)) continue;
     const streakLine = current ? `Keep your ${current}-day streak going.` : "Start a streak today.";
     const res = await send({

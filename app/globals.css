@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@import "@neondatabase/auth/ui/tailwind";
+
+:root {
+  --background: #fbfaf7;
+  --foreground: #1c1b19;
+  --muted: #6b675f;
+  --accent: #0f6e63;
+  --accent-soft: #e3f1ee;
+  --border: #e4e0d8;
+  --card: #ffffff;
+}
+
+@theme inline {
+  --color-bg: var(--background);
+  --color-fg: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-line: var(--border);
+  --color-card: var(--card);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans", sans-serif;
+}
+
+.prose-lesson h1 { font-size: 1.5rem; font-weight: 700; margin: 1.25rem 0 0.5rem; }
+.prose-lesson h2 { font-size: 1.25rem; font-weight: 600; margin: 1.1rem 0 0.4rem; }
+.prose-lesson h3 { font-size: 1.1rem; font-weight: 600; margin: 1rem 0 0.3rem; }
+.prose-lesson p { margin: 0.6rem 0; line-height: 1.65; }
+.prose-lesson ul { list-style: disc; padding-left: 1.4rem; margin: 0.6rem 0; }
+.prose-lesson ol { list-style: decimal; padding-left: 1.4rem; margin: 0.6rem 0; }
+.prose-lesson a { color: var(--accent); text-decoration: underline; }
+.prose-lesson blockquote { border-left: 3px solid var(--border); padding-left: 0.8rem; color: var(--muted); }
+.prose-lesson code { background: #f1eee8; padding: 0 0.25rem; border-radius: 3px; }

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Markdown } from "@/components/markdown";
-import { Card, PageTitle, Pill } from "@/components/ui";
+import { Card, Notice, PageTitle, Pill } from "@/components/ui";
 import { getDb } from "@/db";
 import { getCourseBySlug, getCourseOutline, listCourseRoles } from "@/lib/services/courses";
 import { capabilitiesFor, courseLevel } from "@/lib/services/permissions";
@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: PageProps<"/c/[course]">) {
   return { title: c?.title ?? "Course" };
 }
 
-export default async function CoursePage({ params }: PageProps<"/c/[course]">) {
+export default async function CoursePage({ params, searchParams }: PageProps<"/c/[course]">) {
   const { course: slug } = await params;
   const db = getDb();
   const course = await getCourseBySlug(db, slug);
@@ -24,6 +24,7 @@ export default async function CoursePage({ params }: PageProps<"/c/[course]">) {
 
   return (
     <main className="flex flex-col gap-5">
+      <Notice text={(await searchParams).notice} />
       <div className="flex flex-wrap items-start justify-between gap-3">
         <PageTitle sub={course.summary}>{course.title}</PageTitle>
         <div className="flex items-center gap-2">

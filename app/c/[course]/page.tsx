@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AddResourceForm, NewThreadForm, ResourceList, ThreadList } from "@/components/discussion";
 import { Markdown } from "@/components/markdown";
 import { Card, Notice, PageTitle, Pill } from "@/components/ui";
 import { getDb } from "@/db";
 import { getCourseBySlug, getCourseOutline, listCourseRoles } from "@/lib/services/courses";
+import { listThreads } from "@/lib/services/discussion";
+import { listResources } from "@/lib/services/resources";
 import { capabilitiesFor, courseLevel } from "@/lib/services/permissions";
 import { getCurrentUser } from "@/lib/session";
 
@@ -20,7 +23,14 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
   if (!course) notFound();
   const user = await getCurrentUser();
   const caps = capabilitiesFor(await courseLevel(db, user, course.id));
-  const [outline, roles] = await Promise.all([getCourseOutline(db, course.id), listCourseRoles(db, course.id)]);
+  const [outline, roles, topThreads, courseResources] = await Promise.all([
+    getCourseOutline(db, course.id),
+    listCourseRoles(db, course.id),
+    listThreads(db, { courseId: course.id }, 10),
+    listResources(db, { courseId: course.id }, user?.id),
+  ]);
+  const here = `/c/${course.slug}`;
+  const scopeProps = { courseId: course.id, courseSlug: course.slug, returnTo: here };
 
   return (
     <main className="flex flex-col gap-5">
@@ -67,6 +77,16 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
             </li>
           ))}
         </ol>
+      </section>
+      <section className="flex flex-col gap-2">
+        <h2 className="text-lg font-semibold">Top questions</h2>
+        <ThreadList courseSlug={course.slug} threads={topThreads} />
+        {user && <NewThreadForm {...scopeProps} />}
+      </section>
+      <section className="flex flex-col gap-2">
+        <h2 className="text-lg font-semibold">Resources</h2>
+        <ResourceList rows={courseResources.slice(0, 15)} returnTo={here} viewerId={user?.id} />
+        {user && <AddResourceForm {...scopeProps} />}
       </section>
       {roles.length > 0 && (
         <section>

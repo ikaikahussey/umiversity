@@ -7,12 +7,14 @@ import {
   reviewRevisionAction,
   updateOverviewAction,
 } from "@/app/actions/courses";
+import { reviewResourceAction } from "@/app/actions/discussion";
 import { ActionForm } from "@/components/action-form";
 import { DiffView } from "@/components/diff-view";
 import { Card, Field, inputCls, Notice, PageTitle, Pill } from "@/components/ui";
 import { getDb } from "@/db";
 import { getCourseBySlug, getCourseOutline, listPendingRevisions } from "@/lib/services/courses";
 import { capabilitiesFor, courseLevel } from "@/lib/services/permissions";
+import { listPendingResources } from "@/lib/services/resources";
 import { getCurrentUser } from "@/lib/session";
 
 export const metadata = { title: "Edit course" };
@@ -38,7 +40,11 @@ export default async function CourseEditPage({ params, searchParams }: PageProps
       </main>
     );
   }
-  const [pending, outline] = await Promise.all([listPendingRevisions(db, course.id), getCourseOutline(db, course.id)]);
+  const [pending, outline, pendingResources] = await Promise.all([
+    listPendingRevisions(db, course.id),
+    getCourseOutline(db, course.id),
+    caps.canApprove ? listPendingResources(db, course.id) : Promise.resolve([]),
+  ]);
   const hidden = (
     <>
       <input type="hidden" name="courseId" value={course.id} />
@@ -89,6 +95,36 @@ export default async function CourseEditPage({ params, searchParams }: PageProps
           ))}
         </ul>
       </section>
+
+      {caps.canApprove && (
+        <section>
+          <h2 className="mb-2 text-lg font-semibold">Pending resources ({pendingResources.length})</h2>
+          {pendingResources.length === 0 && <p className="text-sm text-muted">No links waiting.</p>}
+          <ul className="flex flex-col gap-2" data-testid="pending-resources">
+            {pendingResources.map(({ resource: r, addedByHandle }) => (
+              <li key={r.id}>
+                <Card className="flex flex-wrap items-center gap-3 text-sm">
+                  <a href={r.url} target="_blank" rel="noopener noreferrer nofollow" className="flex-1 text-accent underline">
+                    {r.title}
+                  </a>
+                  <Pill>{r.type}</Pill>
+                  <Pill tone={r.source === "youtube_job" ? "warn" : "neutral"}>
+                    {r.source === "youtube_job" ? "YouTube suggestion" : `@${addedByHandle}`}
+                  </Pill>
+                  {(["approve", "reject"] as const).map((d) => (
+                    <ActionForm key={d} action={reviewResourceAction} submitLabel={d === "approve" ? "Approve link" : "Remove link"}>
+                      <input type="hidden" name="resourceId" value={r.id} />
+                      <input type="hidden" name="decision" value={d} />
+                      <input type="hidden" name="courseSlug" value={course.slug} />
+                      <input type="hidden" name="returnTo" value={`/c/${course.slug}`} />
+                    </ActionForm>
+                  ))}
+                </Card>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section>
         <h2 className="mb-2 text-lg font-semibold">Lessons</h2>

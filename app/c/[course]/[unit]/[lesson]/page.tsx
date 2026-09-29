@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AddResourceForm, NewThreadForm, ResourceList, ThreadList } from "@/components/discussion";
 import { Markdown } from "@/components/markdown";
 import { Card } from "@/components/ui";
 import { getDb } from "@/db";
 import { getCourseOutline, getLessonBySlugs } from "@/lib/services/courses";
+import { listThreads } from "@/lib/services/discussion";
+import { listResources } from "@/lib/services/resources";
 import { capabilitiesFor, courseLevel } from "@/lib/services/permissions";
 import { getCurrentUser } from "@/lib/session";
 
@@ -34,6 +37,13 @@ export default async function LessonPage({ params }: Props) {
   const prev = idx > 0 ? flat[idx - 1] : null;
   const next = idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : null;
   const embed = lesson.videoUrl ? youtubeEmbed(lesson.videoUrl) : null;
+  const scope = { courseId: course.id, lessonId: lesson.id };
+  const [threadRows, resourceRows] = await Promise.all([
+    listThreads(db, scope),
+    listResources(db, scope, user?.id),
+  ]);
+  const here = `/c/${course.slug}/${unit.slug}/${lesson.slug}`;
+  const scopeProps = { courseId: course.id, courseSlug: course.slug, unitId: unit.id, lessonId: lesson.id, returnTo: here };
 
   return (
     <main className="flex flex-col gap-4">
@@ -68,6 +78,16 @@ export default async function LessonPage({ params }: Props) {
           <p className="text-sm text-muted">This lesson has no content yet.</p>
         )}
       </Card>
+      <section className="flex flex-col gap-2">
+        <h2 className="text-lg font-semibold">Resources</h2>
+        <ResourceList rows={resourceRows} returnTo={here} viewerId={user?.id} />
+        {user && <AddResourceForm {...scopeProps} />}
+      </section>
+      <section className="flex flex-col gap-2">
+        <h2 className="text-lg font-semibold">Questions</h2>
+        <ThreadList courseSlug={course.slug} threads={threadRows} />
+        {user && <NewThreadForm {...scopeProps} />}
+      </section>
       <nav className="flex justify-between text-sm">
         {prev ? (
           <Link href={`/c/${course.slug}/${prev.unitSlug}/${prev.slug}`} className="text-accent">

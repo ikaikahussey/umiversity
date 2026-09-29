@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { updateProfileAction } from "@/app/actions/profile";
 import { ActionForm } from "@/components/action-form";
@@ -11,7 +12,7 @@ export default async function SettingsPage() {
   if (!user) redirect("/auth/sign-in");
   return (
     <main className="flex flex-col gap-4">
-      <PageTitle>Settings</PageTitle>
+      <PageTitle sub={<Link href="/settings/badges" className="text-accent">Badges and credentials →</Link>}>Settings</PageTitle>
       <Card>
         <ActionForm action={updateProfileAction} submitLabel="Save" testId="profile-form">
           <Field label="Handle">

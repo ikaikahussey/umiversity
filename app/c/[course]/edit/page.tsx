@@ -8,6 +8,7 @@ import {
   updateOverviewAction,
 } from "@/app/actions/courses";
 import { reviewResourceAction } from "@/app/actions/discussion";
+import { scheduleCardAction } from "@/app/actions/engagement";
 import { ActionForm } from "@/components/action-form";
 import { DiffView } from "@/components/diff-view";
 import { Card, Field, inputCls, Notice, PageTitle, Pill } from "@/components/ui";
@@ -15,6 +16,8 @@ import { getDb } from "@/db";
 import { getCourseBySlug, getCourseOutline, listPendingRevisions } from "@/lib/services/courses";
 import { capabilitiesFor, courseLevel } from "@/lib/services/permissions";
 import { listPendingResources } from "@/lib/services/resources";
+import { cardQueue } from "@/lib/services/engagement";
+import { localDate } from "@/lib/dates";
 import { getCurrentUser } from "@/lib/session";
 
 export const metadata = { title: "Edit course" };
@@ -45,6 +48,8 @@ export default async function CourseEditPage({ params, searchParams }: PageProps
     getCourseOutline(db, course.id),
     caps.canApprove ? listPendingResources(db, course.id) : Promise.resolve([]),
   ]);
+  const today = localDate(new Date(), user.timezone);
+  const queue = caps.canApprove ? await cardQueue(db, course.id, today) : [];
   const hidden = (
     <>
       <input type="hidden" name="courseId" value={course.id} />
@@ -202,6 +207,45 @@ export default async function CourseEditPage({ params, searchParams }: PageProps
               </Field>
               <Field label="Overview (Markdown)">
                 <textarea name="overviewMd" rows={6} defaultValue={course.overviewMd} className={inputCls} />
+              </Field>
+            </ActionForm>
+          </Card>
+        </section>
+      )}
+
+      {caps.canApprove && (
+        <section>
+          <Card>
+            <h3 className="mb-2 font-semibold">Daily card queue</h3>
+            <ul className="mb-3 flex flex-col gap-1 text-sm" data-testid="card-queue">
+              {queue.length === 0 && <li className="text-muted">No cards scheduled from today on.</li>}
+              {queue.map((c) => (
+                <li key={c.id}>
+                  <span className="font-mono text-xs">{c.scheduledFor}</span> <Pill>{c.kind}</Pill> {c.body}
+                  {c.answer && <span className="text-muted"> — {c.answer}</span>}
+                </li>
+              ))}
+            </ul>
+            <ActionForm action={scheduleCardAction} submitLabel="Schedule card" resetOnSuccess>
+              {hidden}
+              <input type="hidden" name="returnTo" value={`/c/${course.slug}/edit`} />
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Date">
+                  <input name="scheduledFor" type="date" required defaultValue={today} className={inputCls} />
+                </Field>
+                <Field label="Kind">
+                  <select name="kind" className={inputCls}>
+                    <option value="word">Word</option>
+                    <option value="fact">Fact</option>
+                    <option value="question">Question</option>
+                  </select>
+                </Field>
+              </div>
+              <Field label="Card text">
+                <input name="body" required maxLength={500} className={inputCls} />
+              </Field>
+              <Field label="Answer or meaning (optional)">
+                <input name="answer" className={inputCls} />
               </Field>
             </ActionForm>
           </Card>

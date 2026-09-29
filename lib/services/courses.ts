@@ -3,6 +3,7 @@ import type { Tx } from "@/db";
 import { courseRoles, courses, domains, fields, lessons, revisions, units, users } from "@/db/schema";
 import { AppError } from "@/lib/errors";
 import { requireText, slugify } from "@/lib/text";
+import { notify } from "./notifications";
 import { LEVEL, maybeGrantContributor, requireCourseLevel, type CourseRole } from "./permissions";
 import type { AppUser } from "./users";
 
@@ -199,6 +200,15 @@ export async function reviewRevision(
       .where(eq(lessons.id, rev.lessonId));
     courseOpened = await maybeOpenCourse(db, course.id);
     if (rev.authorId !== user.id) await maybeGrantContributor(db, rev.authorId, course.id);
+  }
+  if (rev.authorId !== user.id) {
+    await notify(
+      db,
+      rev.authorId,
+      "revision",
+      `Your edit to “${rev.title}” was ${decision === "approve" ? "approved" : "not approved"}`,
+      `/c/${course.slug}/edit/${rev.lessonId}`,
+    );
   }
   return { revision: updated, courseOpened };
 }

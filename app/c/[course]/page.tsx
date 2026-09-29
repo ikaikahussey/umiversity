@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { followAction } from "@/app/actions/engagement";
+import { ActionForm } from "@/components/action-form";
 import { AddResourceForm, NewThreadForm, ResourceList, ThreadList } from "@/components/discussion";
 import { Markdown } from "@/components/markdown";
 import { Card, Notice, PageTitle, Pill } from "@/components/ui";
 import { getDb } from "@/db";
 import { getCourseBySlug, getCourseOutline, listCourseRoles } from "@/lib/services/courses";
 import { listThreads } from "@/lib/services/discussion";
+import { completedLessonIds, courseProgress, followerCount, isFollowing } from "@/lib/services/engagement";
 import { listResources } from "@/lib/services/resources";
 import { capabilitiesFor, courseLevel } from "@/lib/services/permissions";
 import { getCurrentUser } from "@/lib/session";
@@ -30,6 +33,12 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
     listResources(db, { courseId: course.id }, user?.id),
   ]);
   const here = `/c/${course.slug}`;
+  const [followers, following, prog, doneIds] = await Promise.all([
+    followerCount(db, course.id),
+    user ? isFollowing(db, user.id, course.id) : Promise.resolve(false),
+    user ? courseProgress(db, user.id, course.id) : Promise.resolve(null),
+    user ? completedLessonIds(db, user.id, course.id) : Promise.resolve(new Set<string>()),
+  ]);
   const scopeProps = { courseId: course.id, courseSlug: course.slug, returnTo: here };
 
   return (
@@ -37,8 +46,18 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
       <Notice text={(await searchParams).notice} />
       <div className="flex flex-wrap items-start justify-between gap-3">
         <PageTitle sub={course.summary}>{course.title}</PageTitle>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Pill tone={course.status === "open" ? "accent" : "warn"}>{course.status}</Pill>
+          <span className="text-xs text-muted" data-testid="followers">
+            {followers} {followers === 1 ? "follower" : "followers"}
+          </span>
+          {user && (
+            <ActionForm action={followAction} submitLabel={following ? "Unfollow" : "Follow"}>
+              <input type="hidden" name="courseId" value={course.id} />
+              <input type="hidden" name="on" value={following ? "0" : "1"} />
+              <input type="hidden" name="returnTo" value={`/c/${course.slug}`} />
+            </ActionForm>
+          )}
           {(caps.canProposeEdits || caps.canApprove) && (
             <Link href={`/c/${course.slug}/edit`} className="rounded border border-line px-2 py-1 text-sm">
               Edit course
@@ -46,6 +65,11 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
           )}
         </div>
       </div>
+      {prog && prog.total > 0 && (
+        <p className="text-sm text-muted" data-testid="course-progress">
+          Your progress: {prog.done} of {prog.total} lessons
+        </p>
+      )}
       {course.overviewMd && (
         <Card>
           <Markdown source={course.overviewMd} />
@@ -69,6 +93,7 @@ export default async function CoursePage({ params, searchParams }: PageProps<"/c
                         {l.title}
                       </Link>
                       <span className="text-xs text-muted">{l.minutes} min</span>
+                      {doneIds.has(l.id) && <span className="text-xs text-accent">✓</span>}
                       {!l.hasBody && <Pill tone="warn">needs content</Pill>}
                     </li>
                   ))}

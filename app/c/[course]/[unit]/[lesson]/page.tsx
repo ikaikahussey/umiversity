@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { completeLessonAction } from "@/app/actions/engagement";
+import { ActionForm } from "@/components/action-form";
 import { AddResourceForm, NewThreadForm, ResourceList, ThreadList } from "@/components/discussion";
 import { Markdown } from "@/components/markdown";
-import { Card } from "@/components/ui";
+import { Card, Notice } from "@/components/ui";
 import { getDb } from "@/db";
 import { getCourseOutline, getLessonBySlugs } from "@/lib/services/courses";
 import { listThreads } from "@/lib/services/discussion";
+import { lessonCompleted } from "@/lib/services/engagement";
 import { listResources } from "@/lib/services/resources";
 import { capabilitiesFor, courseLevel } from "@/lib/services/permissions";
 import { getCurrentUser } from "@/lib/session";
@@ -23,7 +26,7 @@ function youtubeEmbed(url: string): string | null {
   return m ? `https://www.youtube-nocookie.com/embed/${m[1]}` : null;
 }
 
-export default async function LessonPage({ params }: Props) {
+export default async function LessonPage({ params, searchParams }: Props) {
   const { course: cs, unit: us, lesson: ls } = await params;
   const db = getDb();
   const row = await getLessonBySlugs(db, cs, us, ls);
@@ -38,15 +41,17 @@ export default async function LessonPage({ params }: Props) {
   const next = idx >= 0 && idx < flat.length - 1 ? flat[idx + 1] : null;
   const embed = lesson.videoUrl ? youtubeEmbed(lesson.videoUrl) : null;
   const scope = { courseId: course.id, lessonId: lesson.id };
-  const [threadRows, resourceRows] = await Promise.all([
+  const [threadRows, resourceRows, done] = await Promise.all([
     listThreads(db, scope),
     listResources(db, scope, user?.id),
+    user ? lessonCompleted(db, user.id, lesson.id) : Promise.resolve(false),
   ]);
   const here = `/c/${course.slug}/${unit.slug}/${lesson.slug}`;
   const scopeProps = { courseId: course.id, courseSlug: course.slug, unitId: unit.id, lessonId: lesson.id, returnTo: here };
 
   return (
     <main className="flex flex-col gap-4">
+      <Notice text={(await searchParams).notice} />
       <nav className="text-sm text-muted">
         <Link href={`/c/${course.slug}`} className="text-accent">
           {course.title}
@@ -78,6 +83,18 @@ export default async function LessonPage({ params }: Props) {
           <p className="text-sm text-muted">This lesson has no content yet.</p>
         )}
       </Card>
+      {user && (
+        <div data-testid="completion">
+          {done ? (
+            <p className="text-sm text-accent">✓ Completed</p>
+          ) : (
+            <ActionForm action={completeLessonAction} submitLabel="Mark lesson complete">
+              <input type="hidden" name="lessonId" value={lesson.id} />
+              <input type="hidden" name="returnTo" value={here} />
+            </ActionForm>
+          )}
+        </div>
+      )}
       <section className="flex flex-col gap-2">
         <h2 className="text-lg font-semibold">Resources</h2>
         <ResourceList rows={resourceRows} returnTo={here} viewerId={user?.id} />

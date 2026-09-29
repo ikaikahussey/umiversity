@@ -3,6 +3,8 @@ import type { Tx } from "@/db";
 import { badges, courses, lessons, posts, threads, units, users, votes } from "@/db/schema";
 import { AppError } from "@/lib/errors";
 import { requireText } from "@/lib/text";
+import { recordActivity } from "./engagement";
+import { notify } from "./notifications";
 import { LEVEL, courseLevel, maybeGrantContributor } from "./permissions";
 import { enforceRateLimit } from "./rate-limit";
 import type { AppUser } from "./users";
@@ -45,6 +47,10 @@ export async function createPost(db: Tx, user: AppUser, threadId: string, bodyMd
   const body = requireText(bodyMd, "Answer", 1, 20_000);
   await enforceRateLimit(db, user.id, "posts");
   const [p] = await db.insert(posts).values({ threadId, authorId: user.id, bodyMd: body }).returning();
+  if (thread.authorId !== user.id) {
+    const course = await db.query.courses.findFirst({ where: eq(courses.id, thread.courseId) });
+    await notify(db, thread.authorId, "answer", `@${user.handle} answered “${thread.title}”`, `/c/${course?.slug}/q/${thread.id}`);
+  }
   return p;
 }
 
@@ -104,7 +110,12 @@ export async function acceptAnswer(db: Tx, user: AppUser, threadId: string, post
   }
   const previous = thread.acceptedPostId;
   await db.update(threads).set({ acceptedPostId: postId }).where(eq(threads.id, threadId));
-  if (post && post.authorId !== thread.authorId) await maybeGrantContributor(db, post.authorId, thread.courseId);
+  if (post && post.authorId !== thread.authorId && post.id !== previous) {
+    await maybeGrantContributor(db, post.authorId, thread.courseId);
+    await recordActivity(db, post.authorId);
+    const course = await db.query.courses.findFirst({ where: eq(courses.id, thread.courseId) });
+    await notify(db, post.authorId, "accepted", `Your answer to “${thread.title}” was accepted`, `/c/${course?.slug}/q/${thread.id}`);
+  }
   return { thread, post: post ?? null, previousPostId: previous };
 }
 
